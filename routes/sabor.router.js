@@ -10,6 +10,7 @@ const bodyParser = require("body-parser")
 const bodyParserJson = bodyParser.json()
 
 const controllerSabor = require("../controller/sabor/controller_sabor")
+const controllerDoceSabor = require("../controller/doce/controller_doce_sabor")
 
 
 router.post("/", bodyParserJson, async function(request, response) {
@@ -29,6 +30,29 @@ router.get("/", async function (request, response) {
     response.json(result)
 })
 
+router.get("/doce/:id", async function(req, res) {
+
+    let id = req.params.id
+
+    let result = await controllerDoceSabor.buscarDoceIdSabor(id)
+
+    res.status(result.status_code)
+    res.json(result)
+})
+
+
+router.get("/:id", async function(request, response) {
+    // Recebe o id do sabor via parametro
+    let id = request.params.id
+
+    // Recebendo o body da requisição
+    let result = await controllerSabor.buscarSabor(id)
+    
+    response.status(result.status_code)
+    response.json(result)
+
+
+})
 
 router.get("/:id", async function(request, response) {
     // Recebe o id do sabor via parametro

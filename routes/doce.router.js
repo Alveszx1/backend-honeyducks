@@ -11,6 +11,9 @@ const bodyParserJson = bodyParser.json()
 
 const controllerDoce = require("../controller/doce/controller_doce")
 
+const controllerDoceSabor = require("../controller/doce/controller_doce_sabor")
+
+
 
 router.post("/", bodyParserJson, async function(request, response) {
 
@@ -29,6 +32,44 @@ router.get("/", async function (request, response) {
     response.json(result)
 })
 
+router.get("/sabor/:id", async function (req, res) {
+
+    let idDoce = req.params.id
+
+    let result = await controllerDoceSabor.buscarSaborIdDoce(idDoce)
+
+    res.status(result.status_code)
+    res.json(result)
+})
+
+router.get("/completo", async function (req, res) {
+
+    let result = await controllerDoce.listarDoceCompleto()
+
+    res.status(result.status_code)
+    res.json(result)
+})
+
+router.get("/nome/:nome", async function (req, res) {
+
+    let nome = req.params.nome
+
+    let result = await controllerDoce.buscarNomeDoce(nome)
+
+    res.status(result.status_code)
+    res.json(result)
+})
+
+router.get("/categoria/:idCategoria", async function (req, res) {
+
+    let idCategoria = req.params.idCategoria
+
+    let result = await controllerDoce.buscarDocePorIdCategoria(idCategoria)
+
+    res.status(result.status_code)
+    res.json(result)
+})
+
 
 router.get("/:id", async function(request, response) {
     // Recebe o id do sabor via parametro
@@ -39,7 +80,6 @@ router.get("/:id", async function(request, response) {
     
     response.status(result.status_code)
     response.json(result)
-
 
 })
 

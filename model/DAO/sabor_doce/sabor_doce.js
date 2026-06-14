@@ -165,7 +165,7 @@ const deleteDoceSabor = async function(id){
 
 const deleteSaborByIdDoce = async function(id){
     try {
-        let sql = `DELETE FROM tbl_doce_sabor WHERE id_sabor=${id};`
+        let sql = `DELETE FROM tbl_doce_sabor WHERE id_doce=${id};`
 
         let result = await knexConection.raw(sql)
         console.log(result)

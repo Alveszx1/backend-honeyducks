@@ -198,6 +198,39 @@ const listarDoce = async function(doce) {
     }
 }
 
+const listarDoceCompleto = async function(doce) {
+    // Cria uma cópia dos JSON do arquivo de configuração de mensagens 
+let customMessage = JSON.parse(JSON.stringify(configMessages))
+
+try {
+    let result = await doceDAO.selectDoceFormatted()
+    //Validação para verificar se o DAO conseguiu processar o script do BD
+    if(result){
+
+        //Validação para verificar se o conteúdo do array tem dados de retorno
+        // ou se esta vazio
+        if(result.length > 0){
+
+
+            customMessage.DEFAULT_MESSAGE.status = customMessage.SUCCESS_RESPONSE.status
+            customMessage.DEFAULT_MESSAGE.status_code = customMessage.SUCCESS_RESPONSE.status_code
+            customMessage.DEFAULT_MESSAGE.count = result.length
+            customMessage.DEFAULT_MESSAGE.response.doce = result
+
+            return customMessage.DEFAULT_MESSAGE
+        }else{
+            return customMessage.ERROR_NOT_FOUND
+        }
+    }else{
+        return customMessage.ERROR_INTERNAL_SERVER_MODEL
+    }
+
+} catch (error) {
+    console.log(error)
+    return customMessage.ERROR_INTERNAL_SERVER_CONTROLLER //500 (controller)
+}
+}
+
 // Função para atualizar um Doce existente
 const atualizarDoce = async function(doce, id, contentType) {
     let customMessage = JSON.parse(JSON.stringify(configMessages))
@@ -225,12 +258,14 @@ const atualizarDoce = async function(doce, id, contentType) {
 
                         let resultDeleteSabores = await controllerDoceSabor.deletarSaborIdDoce(doce.id)
 
+                        console.log(resultDeleteSabores)
+
                         if(resultDeleteSabores.status){
                             for(itemSabor of doce.sabor){
 
                                 let doceSabor = {
                                     "id_doce": doce.id,
-                                    "id_sabor": sabor.id
+                                    "id_sabor": itemSabor.id
                                 }
                             
                     
@@ -262,7 +297,84 @@ const atualizarDoce = async function(doce, id, contentType) {
             return customMessage.ERROR_CONTENT_TYPE
         }
     } catch (error) {
+        console.log(error)
         return customMessage.ERROR_INTERNAL_SERVER_CONTROLLER
+    }
+}
+
+
+const buscarNomeDoce = async function (nome) {
+    let customMessage = JSON.parse(JSON.stringify(configMessages))
+
+    try {
+        //Validação para garantir que o id seja um numero válido
+        if( nome == undefined || nome == "" || nome == null || !isNaN(nome)){
+            customMessage.ERROR_BAD_REQUEST.field = "[NOME] INVÁLIDO"
+            return customMessage.ERROR_BAD_REQUEST //400
+
+        }else{
+
+            //Chama a função do DAO para pesquisar o doce pelo ID
+            let result = await doceDAO.selectDoceByName(nome)
+            //Validação para verificar se o DAO retornou dados ou um FALSE(Eerro)
+
+            if(result){
+
+
+                for(let doce of result){
+
+                    //Busca na controller da categoria e status o id referente a fk da classificação
+                    let resultCategoria = await controllerCategoria.buscarCategoria(doce.id_categoria)
+                    let resultStatus = await controllerStatus.buscarStatus(doce.id_status)
+
+                    let resultSaborDoce = await controllerDoceSabor.buscarSaborIdDoce(doce.id)
+
+                    if(resultSaborDoce.status){
+                        doce.sabor = resultSaborDoce.response.doce_sabor
+                    }
+
+
+                    
+                    
+                    
+
+                     // Se encontrar o id
+                    if(resultCategoria.status && resultStatus.status){
+
+                        doce.categoria = resultCategoria.response.categoria
+                        doce.status = resultStatus.response.status
+
+                        delete doce.id_categoria
+                        delete doce.id_status
+                    }
+                  
+                }
+                            //Validação para verificar se o DAO tem algum dado no array
+
+                if(result.length > 0){
+                    customMessage.DEFAULT_MESSAGE.status = customMessage.SUCCESS_RESPONSE.status
+                    customMessage.DEFAULT_MESSAGE.status_code = customMessage.SUCCESS_RESPONSE.status_code
+                    customMessage.DEFAULT_MESSAGE.response.doce = result
+
+                    return customMessage.DEFAULT_MESSAGE //200
+
+                }else{
+
+                    return customMessage.ERROR_NOT_FOUND//404
+
+                }
+            }else{
+
+                return customMessage.ERROR_INTERNAL_SERVER_MODEL //500(model)
+
+            }
+        }
+    } catch (error) {
+
+        console.log(error)
+
+        return customMessage.ERROR_INTERNAL_SERVER_CONTROLLER
+
     }
 }
 
@@ -280,6 +392,79 @@ const buscarDoce = async function (id) {
 
             //Chama a função do DAO para pesquisar o doce pelo ID
             let result = await doceDAO.selectByIdDoce(id)
+            //Validação para verificar se o DAO retornou dados ou um FALSE(Eerro)
+
+            if(result){
+
+
+                for(let doce of result){
+
+                    //Busca na controller da categoria e status o id referente a fk da classificação
+                    let resultCategoria = await controllerCategoria.buscarCategoria(doce.id_categoria)
+                    let resultStatus = await controllerStatus.buscarStatus(doce.id_status)
+
+                    let resultSaborDoce = await controllerDoceSabor.buscarSaborIdDoce(doce.id)
+
+                    if(resultSaborDoce.status){
+                        doce.sabor = resultSaborDoce.response.doce_sabor
+                    }
+
+
+                    
+                    
+                    
+
+                     // Se encontrar o id
+                    if(resultCategoria.status && resultStatus.status){
+
+                        doce.categoria = resultCategoria.response.categoria
+                        doce.status = resultStatus.response.status
+
+                        delete doce.id_categoria
+                        delete doce.id_status
+                    }
+                  
+                }
+                            //Validação para verificar se o DAO tem algum dado no array
+
+                if(result.length > 0){
+                    customMessage.DEFAULT_MESSAGE.status = customMessage.SUCCESS_RESPONSE.status
+                    customMessage.DEFAULT_MESSAGE.status_code = customMessage.SUCCESS_RESPONSE.status_code
+                    customMessage.DEFAULT_MESSAGE.response.doce = result
+
+                    return customMessage.DEFAULT_MESSAGE //200
+
+                }else{
+
+                    return customMessage.ERROR_NOT_FOUND//404
+
+                }
+            }else{
+
+                return customMessage.ERROR_INTERNAL_SERVER_MODEL //500(model)
+
+            }
+        }
+    } catch (error) {
+
+        return customMessage.ERROR_INTERNAL_SERVER_CONTROLLER
+
+    }
+}
+
+const buscarDocePorIdCategoria = async function (id) {
+    let customMessage = JSON.parse(JSON.stringify(configMessages))
+
+    try {
+        //Validação para garantir que o id seja um numero válido
+        if( id == undefined || id == "" || id == null || isNaN(id) || id < 1){
+            customMessage.ERROR_BAD_REQUEST.field = "[ID] INVÁLIDO"
+            return customMessage.ERROR_BAD_REQUEST //400
+
+        }else{
+
+            //Chama a função do DAO para pesquisar o doce pelo ID
+            let result = await doceDAO.selectDoceByIdCategoria(id)
             //Validação para verificar se o DAO retornou dados ou um FALSE(Eerro)
 
             if(result){
@@ -389,5 +574,8 @@ module.exports = {
     atualizarDoce,
     listarDoce,
     buscarDoce,
+    listarDoceCompleto,
+    buscarNomeDoce,
+    buscarDocePorIdCategoria,
     excluirDoce
 }

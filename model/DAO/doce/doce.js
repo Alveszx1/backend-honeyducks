@@ -112,6 +112,7 @@ const selectAllDoce = async function () {
     }
 }
 
+
 const selectDoceByIdCategoria = async function (id) {
     try {
         // Script SQL para listar todos os doces cadastrados
@@ -199,6 +200,9 @@ const selectDoceFormatted = async function () {
         return false
     }
 }
+
+
+
 
 
 //Função para retornar um doce filtrando pelo id 

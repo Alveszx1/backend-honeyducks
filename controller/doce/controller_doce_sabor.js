@@ -126,7 +126,6 @@ const atualizarDoceSabor = async function(doceSabor, id){
     }
 }
 
-//Função para buscar os generos filtrando pelo ID do filme
 const buscarSaborIdDoce = async function (id) {
 
     let customMessage = JSON.parse(JSON.stringify(configMessages))
@@ -180,7 +179,7 @@ const buscarDoceIdSabor = async function (id) {
 
                     customMessage.DEFAULT_MESSAGE.status_code = customMessage.SUCCESS_RESPONSE.status_code
 
-                    customMessage.DEFAULT_MESSAGE. response.doce_sabor= result
+                    customMessage.DEFAULT_MESSAGE. response.doce_sabor = result
 
                     return customMessage.DEFAULT_MESSAGE
                 }else{
@@ -216,7 +215,7 @@ const buscarDoceSabor = async function (id) {
 
                     customMessage.DEFAULT_MESSAGE.status_code = customMessage.SUCCESS_RESPONSE.status_code
 
-                    customMessage.DEFAULT_MESSAGE. response.filme_genero = result
+                    customMessage.DEFAULT_MESSAGE. response.doce_sabor = result
 
                     return customMessage.DEFAULT_MESSAGE
                 }else{

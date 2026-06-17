@@ -56,13 +56,13 @@ const ERROR_INTERNAL_SERVER_MODEL_CATEGORIA = {
 const ERROR_INTERNAL_SERVER_MODEL_STATUS = {
     status: false,
     status_code: 500,
-    message: "Não foi possível processar a requisição devido a um erro interno no servidor [MODEL_CATEGORIA]"
+    message: "Não foi possível processar a requisição devido a um erro interno no servidor [MODEL_STATUS]"
 }
 
 const ERROR_INTERNAL_SERVER_MODEL_SABOR = {
     status: false,
     status_code: 500,
-    message: "Não foi possível processar a requisição devido a um erro interno no servidor [MODEL_CATEGORIA]"
+    message: "Não foi possível processar a requisição devido a um erro interno no servidor [MODEL_SABOR]"
 }
 
 
